@@ -1,4 +1,5 @@
 #include "Server.h"
+#include "../vars.h"
 
 Server::Server(net::io_context &ioc, unsigned short port)
 		: acceptor_(ioc, {tcp::v4(), port}), socket_(ioc) {}
@@ -76,7 +77,7 @@ void Server::Session::handleRequest()
 			else
 			{
 				IniParser parser;
-				parser.load("config.ini");
+				parser.load(config_path);
 				std::string dbname = parser.get("Database", "dbname");
 				std::string user = parser.get("Database", "user");
 				std::string pass = parser.get("Database", "password");

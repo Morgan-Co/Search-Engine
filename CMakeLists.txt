@@ -1,15 +1,11 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(diploma VERSION 0.1.0 LANGUAGES C CXX)
 
-cmake_policy(SET CMP0167 NEW)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
- 
-find_package(Boost REQUIRED COMPONENTS system locale thread)
-find_package(OpenSSL REQUIRED)
-find_package(PostgreSQL REQUIRED)
 
+find_package(Boost REQUIRED)
+find_package(PostgreSQL REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBPQXX REQUIRED libpqxx)
 
@@ -20,19 +16,22 @@ add_executable(diploma
     parser/Parser.h parser/Parser.cpp 
     spider/Spider.h spider/Spider.cpp
     server/Server.h server/Server.cpp
+    vars.h
 )
 
-# add_executable(diploma main.cpp)
+target_include_directories(diploma PRIVATE
+    ${Boost_INCLUDE_DIRS}
+    ${PostgreSQL_INCLUDE_DIRS}
+    ${LIBPQXX_INCLUDE_DIRS}
+)
 
-
-target_link_libraries(diploma PRIVATE 
-    Boost::system 
-    Boost::locale 
-    Boost::thread 
-    OpenSSL::SSL 
-    OpenSSL::Crypto
-    pthread
+target_link_libraries(diploma PRIVATE
+    Boost::boost
+    boost_locale
+    ${PostgreSQL_LIBRARIES}
     ${LIBPQXX_LIBRARIES}
-		${PostgreSQL_LIBRARIES}
+    ssl
+    crypto
+    pthread
 )
 
